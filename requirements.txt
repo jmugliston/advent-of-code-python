@@ -1,0 +1,9 @@
+black
+pytest
+pytest-testmon
+pytest-watcher
+loguru
+python-dotenv
+markdownify
+requests
+beautifulsoup4
