@@ -13,7 +13,6 @@ class TestMain(unittest.TestCase):
         self.assertEqual(part1(self.data), -1)
 
     def test_part2_example(self):
-        data = ""
         self.assertEqual(part2(self.data), -1)
 
 
