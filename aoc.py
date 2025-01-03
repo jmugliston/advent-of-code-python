@@ -28,8 +28,8 @@ logger.add(
 def create_template(year, day):
     logger.info(f"Creating template", year=year, day=day, part=1)
 
-    template_dir = "./template"
-    destination_dir = f"./{year}/day{day:02d}"
+    template_dir = "./aoc/template"
+    destination_dir = f"./aoc/year_{year}/day_{day:02d}"
 
     if not os.path.exists(destination_dir):
         os.makedirs(destination_dir)
@@ -58,7 +58,7 @@ def download_question(year, day, part=1):
         articles = soup.find_all("article")
         question_text = "".join(str(article) for article in articles)
         markdown = md(question_text)
-        question_dir = f"./{year}/day{day:02d}"
+        question_dir = f"./aoc/year_{year}/day_{day:02d}"
         with open(f"{question_dir}/README.md", "w") as f:
             f.write(markdown)
     else:
@@ -73,7 +73,7 @@ def download_input(year, day):
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        input_dir = f"./{year}/day{day:02d}/input"
+        input_dir = f"./aoc/year_{year}/day_{day:02d}/input"
         os.makedirs(input_dir, exist_ok=True)
         with open(f"{input_dir}/input.txt", "w") as f:
             f.write(response.text)
@@ -84,9 +84,9 @@ def download_input(year, day):
 def get_solution(year, day, part, example=False):
     logger.info(f"Solving", year=year, day=day, part=part)
 
-    script_path = f"./{year}/day{day:02d}/main.py"
+    script_path = f"./aoc/{year}/day{day:02d}/main.py"
     if os.path.exists(script_path):
-        command = f"python {script_path} --part {part}"
+        command = f"python {script_path} --part {part} {'--example' if example else ''}"
         result = os.popen(command).read()
         return result.strip()
     else:
@@ -122,8 +122,8 @@ def init(year, day):
     download_input(year, day)
 
 
-def solve(year, day, part):
-    answer = get_solution(year, day, part)
+def solve(year, day, part, example):
+    answer = get_solution(year, day, part, example)
     print(answer)
 
 
@@ -165,6 +165,11 @@ if __name__ == "__main__":
 
     parser_solve = subparsers.add_parser("solve", help="Solve a specific day")
     add_common_arguments(parser_solve)
+    parser_solve.add_argument(
+        "--example",
+        action=argparse.BooleanOptionalAction,
+        help="Use example data",
+    )
 
     parser_submit = subparsers.add_parser("submit", help="Submit the solution to a day")
     add_common_arguments(parser_submit)
@@ -174,7 +179,7 @@ if __name__ == "__main__":
     if args.command == "init":
         init(args.year, args.day)
     elif args.command == "solve":
-        solve(args.year, args.day, args.part)
+        solve(args.year, args.day, args.part, args.example)
     elif args.command == "submit":
         submit(args.year, args.day, args.part)
     else:

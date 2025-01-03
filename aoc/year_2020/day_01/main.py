@@ -27,12 +27,19 @@ if __name__ == "__main__":
     parser.add_argument(
         "--part", type=int, help="part number", choices=[1, 2], default=1
     )
+    parser.add_argument(
+        "--example", action=argparse.BooleanOptionalAction, help="use the example data"
+    )
 
     args = parser.parse_args()
 
     dir = os.path.dirname(__file__)
 
-    with open(os.path.join(dir, "input/input.txt"), "r") as file:
+    file_name = "input.txt"
+    if args.example:
+        file_name = "example.txt"
+
+    with open(os.path.join(dir, f"input/{file_name}"), "r") as file:
         data = file.read()
 
     if args.part == 1:
