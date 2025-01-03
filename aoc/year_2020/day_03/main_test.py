@@ -10,11 +10,11 @@ class TestMain(unittest.TestCase):
             self.data = file.read()
 
     def test_part1_example(self):
-        self.assertEqual(part1(self.data), -1)
+        self.assertEqual(part1(self.data), 7)
 
     def test_part2_example(self):
         data = ""
-        self.assertEqual(part2(self.data), -1)
+        self.assertEqual(part2(self.data), 336)
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ import argparse
 from datetime import datetime
 import shutil
 import os
+import importlib
 import requests
 from dotenv import load_dotenv
 from markdownify import markdownify as md
@@ -85,14 +86,8 @@ def download_input(year, day):
 
 def get_solution(year, day, part, example=False):
     logger.info(f"Solving", year=year, day=day, part=part)
-
-    script_path = f"./aoc/{year}/day{day:02d}/main.py"
-    if os.path.exists(script_path):
-        command = f"python {script_path} --part {part} {'--example' if example else ''}"
-        result = os.popen(command).read()
-        return result.strip()
-    else:
-        logger.error(f"Script {script_path} does not exist.")
+    module = importlib.import_module(f"aoc.year_{year}.day_{day:02d}.main")
+    return module.main(part, example)
 
 
 def submit_solution(year, day, part, answer):

@@ -1,10 +1,11 @@
 def parse_lines_of_text(input):
-    return input.split("\n")
-
-
-def parse_lines_of_numbers(input):
-    return [int(x) for x in input.split("\n")]
+    return input.strip().split("\n")
 
 
 def parse_grid(input):
-    return [list(x) for x in input.split("\n")]
+    return [list(x) for x in input.strip().split("\n")]
+
+
+def print_grid(grid):
+    for row in grid:
+        print("".join(row))
