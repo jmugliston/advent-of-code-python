@@ -91,7 +91,7 @@ def get_solution(year, day, part, example=False):
 
 
 def submit_solution(year, day, part, answer):
-    logger.info(f"Submitting solution", year=year, day=day, part=part)
+    logger.info(f"Submitting answer: {answer}", year=year, day=day, part=part)
 
     url = f"{BASE_URL}/{year}/day/{day}/answer"
     headers = {"Cookie": f"session={SESSION_COOKIE}", "User-Agent": USER_AGENT}
