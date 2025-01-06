@@ -42,12 +42,20 @@ def run_boot_sequence(cubes):
         max_coords = get_max_coords(cube_map.keys())
         ranges = [range(min_coords[i] - 1, max_coords[i] + 2) for i in range(dimensions)]
         
+        neighbour_counts = {}
         for coord in product(*ranges):
-            active_neighbours = sum(cube_map.get(neighbour, False) for neighbour in get_neighbours(coord))
             if cube_map.get(coord, False):
-                next_map[coord] = active_neighbours in [2, 3]
+                for neighbour in get_neighbours(coord):
+                    if neighbour not in neighbour_counts:
+                        neighbour_counts[neighbour] = 0
+                    neighbour_counts[neighbour] += 1
+
+        for coord, count in neighbour_counts.items():
+            if cube_map.get(coord, False):
+                next_map[coord] = count in [2, 3]
             else:
-                next_map[coord] = active_neighbours == 3
+                next_map[coord] = count == 3
+
         cube_map = next_map
 
     return cube_map
