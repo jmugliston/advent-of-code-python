@@ -2,63 +2,60 @@ import os
 import argparse
 
 def parse_data(data):
-    split = data.strip().split("\n\n")
+    split = data.split('\n\n')
 
     rules = {}
-    for rule in split[0].split("\n"):
-        key, value = rule.split(": ")
+    for line in split[0].split('\n'):
+        if not line:
+            break
 
-        if "|" in value:
-            value = value.split(" | ")
-            a = value[0].split(" ")
-            b = value[1].split(" ")
-            value = [a, b]
+        rule_id, options = line.split(': ')
+        rule_id = int(rule_id)
+
+        if '"' in options:
+            rule = options[1:-1]
         else:
-            value = value.replace('"', "").split(" ")
+            rule = []
+            for option in options.split('|'):
+                rule.append(list(map(int, option.split())))
 
-        rules[key] = value
-
-    messages = split[1].split("\n")
+        rules[rule_id] = rule
+		
+    messages = split[1].split('\n')
 
     return rules, messages
 
-def check_rule(rules, message, current_rule, pos=0):
-    if pos >= len(message):
-        return False, pos
 
-    if len(current_rule) == 1 and current_rule[0] in ["a", "b"]:
-        if pos < len(message) and message[pos] == current_rule[0]:
-            return True, pos + 1
-        else:
-            return False, pos
+def check_rule(rules, message, rule=0, pos=0):
+    if pos == len(message):
+        return []
 
-    if all(isinstance(sub_rule, list) for sub_rule in current_rule):
-        for sub_rule in current_rule:
-            valid, new_pos = check_rule(rules, message, sub_rule, pos)
-            if valid:
-                return True, new_pos
-        return False, pos
+    rule = rules[rule]
+    if type(rule) is str:
+        if message[pos] == rule:
+            return [pos + 1]
+        return []
 
-    initial_pos = pos
-    for rule in current_rule:
-        valid, pos = check_rule(rules, message, rules[rule], pos)
-        if not valid:
-            return False, initial_pos
+    matches = []
+    for option in rule:
+        sub_matches = [pos]
+        for sub_rule in option:
+            new_matches = []
+            for idx in sub_matches:
+                new_matches += check_rule(rules, message, sub_rule, idx)
+            sub_matches = new_matches
 
-    return True, pos
+        matches += sub_matches
+
+    return matches
 
 
 def part1(data):
     rules, messages = parse_data(data)
 
-    start_rule = rules["0"]
-
     valid_messages = 0
     for message in messages:
-        is_valid, final_idx = check_rule(rules, message, start_rule)
-        if final_idx < len(message):
-            is_valid = False
-        if is_valid:
+        if len(message) in check_rule(rules, message):
             valid_messages += 1
 
     return valid_messages
@@ -67,17 +64,12 @@ def part1(data):
 def part2(data):
     rules, messages = parse_data(data)
 
-    rules["8"] = [["42"], ["42", "8"]]
-    rules["11"] = [["42", "31"], ["42", "11", "31"]]
-
-    start_rule = rules["0"]
+    rules[8] = [[42], [42, 8]]
+    rules[11] = [[42, 31], [42, 11, 31]]
 
     valid_messages = 0
     for message in messages:
-        is_valid, final_idx = check_rule(rules, message, start_rule)
-        if final_idx < len(message):
-            is_valid = False
-        if is_valid:
+        if len(message) in check_rule(rules, message):
             valid_messages += 1
 
     return valid_messages
