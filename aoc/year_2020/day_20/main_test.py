@@ -13,7 +13,7 @@ class TestMain(unittest.TestCase):
         self.assertEqual(part1(self.data), 20899048083289)
 
     def test_part2_example(self):
-        self.assertEqual(part2(self.data), -1)
+        self.assertEqual(part2(self.data), 273)
 
 
 if __name__ == "__main__":
