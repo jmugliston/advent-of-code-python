@@ -1,32 +1,23 @@
 import os
 import argparse
 
-def parse_input(data):
-    lines = data.strip().split("\n")
-    return int(lines[0]), int(lines[1])
-
-
-def find_loop_size(subject, target, divider):
-    value, loop_size = 1, 0
-    while value != target:
-        value = (value * subject) % divider
-        loop_size += 1
-    return loop_size
 
 def part1(data):
-    card, door = parse_input(data)
+    nums = [int(num) for num in data.strip().split("\n") if num]
 
-    divider = 20201227
+    return sum(map(lambda x: x // 3 - 2, nums))
 
-    card_loop = find_loop_size(7, card, divider)
 
-    encryption_key = pow(door, card_loop, divider)
+def part2(data):
+    nums = [int(num) for num in data.strip().split("\n") if num]
+
+    total = 0
+    for num in nums:
+        while num > 0:
+            num = num // 3 - 2
+            total += max(num, 0)
     
-    return encryption_key
-
-
-def part2():
-    return -1
+    return total
 
 
 def main(part, example=False):
